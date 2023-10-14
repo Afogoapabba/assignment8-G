@@ -1,27 +1,33 @@
-import com.microsoft.playwright.Locator;
-import com.microsoft.playwright.Page;
-import com.microsoft.playwright.options.AriaRole;
+package tests;
+
+import com.github.javafaker.Faker;
 import org.junit.jupiter.api.Test;
+import pages.SignUpPage;
+import testbase.TestBase;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class test_sign_up extends TestBase{
+public class test_sign_up extends TestBase {
+    /**
+     * Test will create a new login.
+     */
     @Test
     void newSignUp() {
+        Faker faker = new Faker();
         // Create and open page
         SignUpPage signUpPage = new SignUpPage(page);
         signUpPage.openSignUpPage();
         // Generate test data
-        String username = generateRandomString(15);
-        String password = generateRandomString(25);
+        String username = faker.name().username();
+        String password = faker.internet().password();
 
         // Fill form
         signUpPage.fillForm(username,password);
         // Assert that test data is filled in
-        assertThat(signUpPage.tbUsername).hasValue(username);
-        assertThat(signUpPage.tbPassword).hasValue(password);
+        assertThat(signUpPage.getTbUsername()).hasValue(username);
+        assertThat(signUpPage.getTbPassword()).hasValue(password);
         // Create an onDialog handler to validate the dialog before accepting
         page.onDialog(dialog -> {
             assertEquals("alert", dialog.type());

@@ -1,23 +1,34 @@
+package tests;
+
+import com.github.javafaker.Faker;
 import com.microsoft.playwright.Locator;
-import com.microsoft.playwright.Page;
-import com.microsoft.playwright.options.AriaRole;
 import org.junit.jupiter.api.Test;
+import pages.LogInPage;
+import testbase.TestBase;
+
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 public class test_login extends TestBase {
+    /**
+     * Test will try to log in with a user
+     * not registered
+     */
     @Test
     void invalidLogin() {
+        Faker faker = new Faker();
         // Create and open page
         LogInPage logInPage = new LogInPage(page);
         logInPage.openLogInPage();
         // Generate test data
-        String username = generateRandomString(15);
-        String password = generateRandomString(25);
+        String username = faker.name().username();
+        String password = faker.internet().password();
         // Fill form
         logInPage.fillForm(username,password);
         // Assert that test data is filled in
-        assertThat(logInPage.tbUsername).hasValue(username);
-        assertThat(logInPage.tbPassword).hasValue(password);
+        assertThat(logInPage.getTbUsername()).hasValue(username);
+        assertThat(logInPage.getTbPassword()).hasValue(password);
         // Create an onDialog handler to validate the dialog before accepting
         page.onDialog(dialog -> {
             assertEquals("alert", dialog.type());
@@ -26,9 +37,14 @@ public class test_login extends TestBase {
         });
 
         // Log in
-        logInPage.loginButton.click();
+        logInPage.getLoginButton().click();
 
     }
+
+    /**
+     * Test will try to log in with an already
+     * registered user.(set in TestBase)
+     */
     @Test
     void validLogin() {
 
@@ -41,17 +57,11 @@ public class test_login extends TestBase {
         // Fill form
         logInPage.fillForm(username,password);
         // Assert that test data is filled in
-        assertThat(logInPage.tbUsername).hasValue(username);
-        assertThat(logInPage.tbPassword).hasValue(password);
-        // Create an onDialog handler to validate the dialog before accepting
-        page.onDialog(dialog -> {
-            assertEquals("alert", dialog.type());
-            assertTrue(dialog.message().contains("User does not exist."));
-            dialog.accept();
-        });
+        assertThat(logInPage.getTbUsername()).hasValue(username);
+        assertThat(logInPage.getTbPassword()).hasValue(password);
 
         // Log in
-        logInPage.loginButton.click();
+        logInPage.getLoginButton().click();
 
         // Asser correct user is logged in
         Locator usernameLink = page.locator("#nameofuser");

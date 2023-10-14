@@ -1,7 +1,28 @@
+package pages;
+
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.options.AriaRole;
 public class LogInPage {
+    public Locator getTbUsername() {
+        return tbUsername;
+    }
+
+    public Locator getTbPassword() {
+        return tbPassword;
+    }
+
+    public Locator getLoginButton() {
+        return loginButton;
+    }
+
+    public Locator getCloseButton() {
+        return closeButton;
+    }
+
+    public Locator getNavigationLink() {
+        return navigationLink;
+    }
 
     //create locators
     Locator tbUsername;
